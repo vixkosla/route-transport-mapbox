@@ -6,8 +6,8 @@ const map = new mapboxgl.Map({
     // style: "mapbox://styles/hookahlocator/clsox9viv009f01pk1mf40pwu",
     // style: "mapbox://styles/mapbox/standard",
     style: "mapbox://styles/hookahlocator/clsumxbp8002g01pihdv4290g",
-    zoom: 11,
-    center: [37.38888358146497,
+    zoom: 10,
+    center: [38.08888358146497,
         55.848076793921535],
     //            pitch: 76,
     //            bearing: -177.2,
@@ -35,8 +35,35 @@ const end = [
 ];
 const coordinates = []
 coordinates.push(start, middle, end)
-let coordinatesUpdated = coordinates.map((coordinate, index) => turf.point(coordinate, { id: index + 1 }))
+let coordinatesUpdated = coordinates.map((coordinate, index) => turf.point(coordinate,
+    {
+        id: index + 1,
+        symbol: alphabet(index, coordinates.length),
+        icon: iconSelector(index, coordinates.length)
+    }
+))
 const multiPoint = turf.featureCollection(coordinatesUpdated)
+
+function alphabet(index, length) {
+    if (index === 0) {
+        return 'A'
+    }
+    else if (index === length - 1) {
+        return 'B'
+    }
+    else {
+        return ''
+    }
+}
+
+function iconSelector(index, length) {
+    if (index == 0 || index == (length - 1)) {
+        return 'blackSquare'
+    } else {
+        return 'blueSquare'
+    }
+
+}
 
 console.log(multiPoint)
 
@@ -55,7 +82,7 @@ console.log(fetchURL)
 async function getIconImage() {
     map.loadImage('./square.png', (error, image) => {
         if (error) throw error;
-        map.addImage('square', image)
+        map.addImage('blackSquare', image)
         console.log(image)
 
         map.addLayer({
@@ -66,9 +93,9 @@ async function getIconImage() {
                 data: multiPoint
             }, // reference the data source
             'layout': {
-                'icon-image': "square", // reference the image
+                'icon-image': ['get', 'icon'],
                 'icon-size': 0.4,
-                'icon-allow-overlap': true
+                'icon-allow-overlap': true,
             }
         }, 'points-text');
     })
@@ -151,7 +178,7 @@ map.on('load', () => {
             "points"
         ,
         layout: {
-            'text-field': ['get', 'id'],
+            'text-field': ['get', 'symbol'],
             'text-size': 15,
             'text-offset': [-0.04, -0.01],
             // 'text-variable-anchor': ['top', 'bottom', 'left', 'right'],
