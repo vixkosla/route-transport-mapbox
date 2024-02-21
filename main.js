@@ -3,8 +3,8 @@ mapboxgl.accessToken = 'pk.eyJ1IjoiaG9va2FobG9jYXRvciIsImEiOiI5WnJEQTBBIn0.DrAlI
 const map = new mapboxgl.Map({
     container: 'map',
     // Choose from Mapbox's core styles, or make your own style with Mapbox Studio
-    // style: "mapbox://styles/hookahlocator/clsox9viv009f01pk1mf40pwu",
-    // style: "mapbox://styles/mapbox/standard",
+    // style: "mapbox://styles/hookahlocator/clsox9viv009f01pk1mf40pwu?optimize=true",
+    // style: "mapbox://styles/mapbox/streets-v10?optimize=true",
     style: "mapbox://styles/hookahlocator/clsumxbp8002g01pihdv4290g",
     zoom: 10,
     center: [38.08888358146497,
@@ -80,25 +80,33 @@ fetchURL = `https://api.mapbox.com/directions/v5/mapbox/driving/` + fetchURL + `
 console.log(fetchURL)
 
 async function getIconImage() {
-    map.loadImage('./square.png', (error, image) => {
+    map.loadImage('./blackSquare.png', (error, image) => {
         if (error) throw error;
         map.addImage('blackSquare', image)
         console.log(image)
 
-        map.addLayer({
-            'id': 'points-image',
-            'type': 'symbol',
-            'source': {
-                type: 'geojson',
-                data: multiPoint
-            }, // reference the data source
-            'layout': {
-                'icon-image': ['get', 'icon'],
-                'icon-size': 0.4,
-                'icon-allow-overlap': true,
-            }
-        }, 'points-text');
     })
+
+    map.loadImage('./blueSquare.png', (error, image) => {
+        if (error) throw error;
+        map.addImage('blueSquare', image)
+        console.log(image)
+
+    })
+
+    map.addLayer({
+        'id': 'points-image',
+        'type': 'symbol',
+        'source': {
+            type: 'geojson',
+            data: multiPoint
+        }, // reference the data source
+        'layout': {
+            'icon-image': ['get', 'icon'],
+            'icon-size': 0.4,
+            'icon-allow-overlap': true,
+        }
+    }, 'points-text');
 }
 // create a function to make a directions request
 async function getRoute(start, end) {
